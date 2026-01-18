@@ -1,0 +1,53 @@
+module.exports = {
+  apps: [
+    {
+      name: 'ops-frontend',
+      script: 'npx',
+      args: 'vite preview --host 0.0.0.0 --port 5173',
+      cwd: './',
+      instances: 1,
+      autorestart: true,
+      watch: false,
+      max_memory_restart: '500M',
+      env: {
+        NODE_ENV: 'production',
+      },
+      error_file: './logs/frontend-error.log',
+      out_file: './logs/frontend-out.log',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+    },
+    {
+      name: 'ops-api-server',
+      script: 'tsx',
+      args: 'server/api-server.ts',
+      instances: 1,
+      autorestart: true,
+      watch: false,
+      max_memory_restart: '500M',
+      env: {
+        NODE_ENV: 'production',
+        PORT: 3000,
+      },
+      env_file: '.env.server',
+      error_file: './logs/api-error.log',
+      out_file: './logs/api-out.log',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+    },
+    {
+      name: 'ops-playwright-server',
+      script: 'tsx',
+      args: 'server/index.ts',
+      instances: 1,
+      autorestart: true,
+      watch: false,
+      max_memory_restart: '1G',
+      env: {
+        NODE_ENV: 'production',
+        PORT: 3002,
+      },
+      error_file: './logs/playwright-error.log',
+      out_file: './logs/playwright-out.log',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+    },
+  ],
+}

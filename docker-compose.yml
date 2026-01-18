@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ops-workflow-center
+    ports:
+      - "5173:5173"  # 前端端口
+      - "3000:3000"  # 后端 API 端口
+    environment:
+      - NODE_ENV=production
+      # 服务提供商配置
+      - VITE_SERVICE_PROVIDER=${VITE_SERVICE_PROVIDER}
+      - VITE_API_URL=${VITE_API_URL}
+      # MySQL 数据库配置
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_DATABASE=${DB_DATABASE}
+      # JWT 配置
+      - JWT_SECRET=${JWT_SECRET}
+      # 文件上传配置
+      - UPLOAD_DIR=${UPLOAD_DIR}
+    env_file:
+      - .env
+    volumes:
+      - ./logs:/app/logs  # 日志持久化
+      - ./uploads:/app/uploads  # 上传文件持久化
+    restart: unless-stopped
+    networks:
+      - ops-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5173"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  ops-network:
+    driver: bridge
